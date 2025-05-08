@@ -66,6 +66,8 @@ export default function App() {
     setSelectedId((selectedId) => (id === selectedId ? null : id));
   }
 
+     
+
   function handelCloseMovie() {
     setSelectedId(null);
   }
