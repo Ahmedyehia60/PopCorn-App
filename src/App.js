@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import SrarRating from "./StarRating";
 const tempMovieData = [
   {
     imdbID: "tt1375666",
@@ -54,8 +54,8 @@ const KEY = "f84fc31d";
 
 export default function App() {
   const [query, setQuery] = useState("");
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [movies, setMovies] = useState([]);
+  const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState(null);
@@ -68,6 +68,9 @@ export default function App() {
 
   function handelCloseMovie() {
     setSelectedId(null);
+  }
+  function handelAddWatched(movie) { 
+     setWatched(watched=> [...watched , movie])
   }
   useEffect(
     function () {
@@ -131,6 +134,7 @@ export default function App() {
             <MovieDeltails
               selectedId={selectedId}
               onCloseMovie={handelCloseMovie}
+              onAddWatched = { handelAddWatched}
             />
           ) : (
             <>
@@ -261,18 +265,76 @@ function Movie({ movie, onSelectMovie }) {
 }
 
 function MovieDeltails({ selectedId, onCloseMovie }) {
+  const [movie, setMovie] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    Title: title,
+    Year: year,
+    Poster: poster,
+    Runtime: runtime,
+    imdbRating,
+    Plot: plot,
+    Released: realeased,
+    Actors: actors,
+    Director: director,
+    Genre: genre,
+  } = movie;
 
-  useEffect(function(){
-     async function getMovieDetalis(){
-      
-     }
-  })
+  useEffect(
+    function () {
+      async function getMovieDetalis() {
+        setIsLoading(true);
+        const res = await fetch(
+          `https://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
+        );
+        const data = await res.json();
+        setMovie(data);
+        setIsLoading(false);
+      }
+      getMovieDetalis();
+    },
+    [selectedId]
+  );
+
   return (
     <div className="details">
-      {" "}
-      <button className="btn-back" onClick={onCloseMovie}>
-        &larr;
-      </button>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <header>
+            <button className="btn-back" onClick={onCloseMovie}>
+              &larr;
+            </button>
+
+            <img src={poster} alt={`Poster of ${movie} Movie`} />
+
+            <div className="details-overview">
+              <h2>{title}</h2>
+              <p>
+                {realeased} &bull; {runtime}
+              </p>
+              <p>{genre}</p>
+              <p>
+                <span>⭐</span>
+                {imdbRating} IMDb rating
+              </p>
+            </div>
+          </header>{" "}
+          <section>
+            <div className="rating">
+              <SrarRating maxRating={10} size={24} />
+            </div>
+
+            <p>
+              <em>{plot}</em>
+            </p>
+            <p>Starring {actors} </p>
+            <p>Directed by {director}</p>
+          </section>
+          
+        </>
+      )}
       {selectedId}
     </div>
   );
