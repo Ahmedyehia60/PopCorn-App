@@ -14,13 +14,15 @@ export default function StarRating({
   maxRating = 5,
   color = "#fcc419",
   size = 48,
-  className="",
+  className = "",
+  onSetRating,
 }) {
   const [rating, setRating] = useState(0);
   const [tempRating, setTempRating] = useState(0);
 
   function handelRating(rating) {
     setRating(rating);
+    onSetRating?.(rating);
   }
 
   const textStyle = {
@@ -49,15 +51,13 @@ export default function StarRating({
   );
 }
 
-
-function Star({ onRate, full, onHoverIn, onHoverOut ,color ,size }) {
-
-    const starStyle = {
-      width: `${size}px`,
-      height: `${size}px`,
-      display: "block",
-      cursor: "pointer",
-    };
+function Star({ onRate, full, onHoverIn, onHoverOut, color, size }) {
+  const starStyle = {
+    width: `${size}px`,
+    height: `${size}px`,
+    display: "block",
+    cursor: "pointer",
+  };
 
   return (
     <span
