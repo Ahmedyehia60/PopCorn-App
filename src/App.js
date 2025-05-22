@@ -112,7 +112,7 @@ function NumResults({ movies }) {
 }
 
 //=================search com =============
-
+ 
 function Search({ query, setQuery }) {
   const inputEl = useRef(null);
 
